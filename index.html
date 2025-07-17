@@ -1,4 +1,4 @@
-final_html = """
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -98,6 +98,7 @@ final_html = """
       padding: 20px;
       text-align: center;
       margin-top: 32px;
+      display: none;
     }
 
     .result-box strong {
@@ -106,11 +107,21 @@ final_html = """
       margin-top: 8px;
     }
 
+    .error-message {
+      color: #c0392b;
+      text-align: center;
+      font-weight: 500;
+      margin-top: 24px;
+      display: none;
+    }
+
     .followup {
       text-align: center;
       margin-top: 20px;
-      color: var(--text-muted);
-      font-size: 0.95rem;
+      color: var(--brand-dark);
+      font-size: 1rem;
+      font-weight: 500;
+      display: none;
     }
 
     .loader {
@@ -139,7 +150,6 @@ final_html = """
 
     <label for="aov">Average Order Value (₹)</label>
     <input type="number" id="aov" placeholder="e.g. 850" />
-
     <small>Example: ₹850</small>
 
     <label for="missed">Missed Conversations per Day</label>
@@ -152,46 +162,54 @@ final_html = """
 
     <button class="calculate-btn" onclick="calculateLoss()">🔄 Calculate</button>
     <div class="loader" id="loader"></div>
-    <div class="result-box" id="output" style="display:none;"></div>
+    <div class="error-message" id="error"></div>
+    <div class="result-box" id="output"></div>
     <p class="followup" id="followup"></p>
   </div>
 
   <script>
+    function formatNumber(num) {
+      return num.toLocaleString('en-IN');
+    }
+
     function calculateLoss() {
       const loader = document.getElementById('loader');
       const output = document.getElementById('output');
       const followup = document.getElementById('followup');
+      const error = document.getElementById('error');
+
       const aov = parseFloat(document.getElementById('aov').value);
       const missed = parseFloat(document.getElementById('missed').value);
       const rate = parseFloat(document.getElementById('conversion').value);
 
-      output.style.display = "none";
-      output.innerHTML = "";
-      followup.innerHTML = "";
       loader.style.display = 'block';
+      output.style.display = 'none';
+      followup.style.display = 'none';
+      error.style.display = 'none';
 
       setTimeout(() => {
         loader.style.display = 'none';
 
         if (isNaN(aov) || isNaN(missed) || isNaN(rate)) {
-          output.style.display = "block";
-          output.innerHTML = "⚠️ Uh-oh! Please enter valid numbers in all fields.";
+          error.innerHTML = "⚠️ Uh-oh! Please enter valid numbers in all fields.";
+          error.style.display = 'block';
           return;
         }
 
         const dailyLoss = missed * (rate / 100) * aov;
         const monthlyLoss = dailyLoss * 30;
 
-        output.style.display = "block";
         output.innerHTML = `
           🧾 You’re losing approximately:
-          <strong>₹${dailyLoss.toFixed(0)} / day</strong>
-          <strong>₹${monthlyLoss.toFixed(0)} / month</strong>
+          <strong>₹${formatNumber(dailyLoss.toFixed(0))} / day</strong>
+          <strong>₹${formatNumber(monthlyLoss.toFixed(0))} / month</strong>
         `;
+        output.style.display = 'block';
 
         followup.innerHTML = `
           That’s how much you're losing every month. Deploying AI agents might be a smart fix - they’re your 24x7 brand companions who never miss a customer conversation.
         `;
+        followup.style.display = 'block';
       }, 800);
     }
   </script>
@@ -201,6 +219,6 @@ final_html = """
 """
 
 with open("/mnt/data/index.html", "w") as file:
-    file.write(final_html)
+    file.write(final_polished_html)
 
-"/mnt/data/index.html"
+
