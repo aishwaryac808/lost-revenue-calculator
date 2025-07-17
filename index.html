@@ -1,10 +1,74 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Lost Revenue Calculator</title>
-  </head>
-  <body>
-    <h1>✅ It works!</h1>
-    <p>This is your Lost Revenue Calculator placeholder page.</p>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lost Revenue Calculator</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 500px;
+      margin: 60px auto;
+      padding: 0 20px;
+      background: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+    }
+    label {
+      margin-top: 20px;
+      display: block;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #111;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 30px;
+      font-size: 1.2em;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>💸 Lost Revenue Calculator</h1>
+  <p>Find out how much you’re losing from missed conversations or failed deliveries.</p>
+
+  <label>Average Order Value (₹)</label>
+  <input type="number" id="aov" placeholder="e.g. 800" />
+
+  <label>Missed Conversations per Day</label>
+  <input type="number" id="missed" placeholder="e.g. 15" />
+
+  <label>Conversion Rate (%)</label>
+  <input type="number" id="conversion" placeholder="e.g. 20" />
+
+  <button onclick="calculateLoss()">Calculate</button>
+
+  <div class="result" id="output"></div>
+
+  <script>
+    function calculateLoss() {
+      const aov = parseFloat(document.getElementById('aov').value) || 0;
+      const missed = parseFloat(document.getElementById('missed').value) || 0;
+      const rate = parseFloat(document.getElementById('conversion').value) || 0;
+
+      const dailyLoss = missed * (rate / 100) * aov;
+      const monthlyLoss = dailyLoss * 30;
+
+      document.getElementById('output').innerHTML =
+        `🧾 Estimated Loss:<br> ₹${dailyLoss.toFixed(0)} / day<br> ₹${monthlyLoss.toFixed(0)} / month`;
+    }
+  </script>
+</body>
 </html>
