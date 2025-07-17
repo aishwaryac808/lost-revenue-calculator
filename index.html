@@ -1,6 +1,4 @@
-from IPython.display import HTML
-
-updated_html = """
+final_html = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -77,27 +75,42 @@ updated_html = """
       font-size: 0.85rem;
     }
 
-    button {
+    .calculate-btn {
       background: var(--brand-accent);
       color: white;
       font-size: 1rem;
-      padding: 14px;
+      padding: 12px 24px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      width: 100%;
-      margin-top: 24px;
+      display: block;
+      margin: 24px auto 0;
     }
 
-    button:hover {
+    .calculate-btn:hover {
       opacity: 0.95;
     }
 
-    .result {
+    .result-box {
+      background: #fff5f2;
+      border: 1px solid #ffddda;
+      border-radius: 12px;
+      padding: 20px;
       text-align: center;
       margin-top: 32px;
-      font-weight: bold;
-      font-size: 1.25rem;
+    }
+
+    .result-box strong {
+      font-size: 1.5rem;
+      display: block;
+      margin-top: 8px;
+    }
+
+    .followup {
+      text-align: center;
+      margin-top: 20px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
     }
 
     .loader {
@@ -116,22 +129,17 @@ updated_html = """
       100% { transform: rotate(360deg); }
     }
 
-    footer {
-      margin-top: 48px;
-      text-align: center;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
   </style>
 </head>
 <body>
 
   <div class="container">
     <h1>💸 Lost Revenue Calculator</h1>
-    <p class="subhead">Estimate how much revenue you're losing from missed conversations or bad deliveries — especially on COD orders.</p>
+    <p class="subhead">Estimate how much revenue you're losing from missed conversations.</p>
 
     <label for="aov">Average Order Value (₹)</label>
     <input type="number" id="aov" placeholder="e.g. 850" />
+
     <small>Example: ₹850</small>
 
     <label for="missed">Missed Conversations per Day</label>
@@ -142,34 +150,49 @@ updated_html = """
     <input type="number" id="conversion" placeholder="e.g. 20" />
     <small>Example: 20% of engaged users typically convert</small>
 
-    <button onclick="calculateLoss()">🔄 Calculate</button>
+    <button class="calculate-btn" onclick="calculateLoss()">🔄 Calculate</button>
     <div class="loader" id="loader"></div>
-    <div class="result" id="output"></div>
+    <div class="result-box" id="output" style="display:none;"></div>
+    <p class="followup" id="followup"></p>
   </div>
-
-  <footer>
-    Built with ❤️ by the Noodle team. Want help fixing revenue leaks? Talk to our AI Agents.
-  </footer>
 
   <script>
     function calculateLoss() {
       const loader = document.getElementById('loader');
       const output = document.getElementById('output');
+      const followup = document.getElementById('followup');
+      const aov = parseFloat(document.getElementById('aov').value);
+      const missed = parseFloat(document.getElementById('missed').value);
+      const rate = parseFloat(document.getElementById('conversion').value);
+
+      output.style.display = "none";
+      output.innerHTML = "";
+      followup.innerHTML = "";
       loader.style.display = 'block';
-      output.innerHTML = '';
 
       setTimeout(() => {
         loader.style.display = 'none';
 
-        const aov = parseFloat(document.getElementById('aov').value) || 0;
-        const missed = parseFloat(document.getElementById('missed').value) || 0;
-        const rate = parseFloat(document.getElementById('conversion').value) || 0;
+        if (isNaN(aov) || isNaN(missed) || isNaN(rate)) {
+          output.style.display = "block";
+          output.innerHTML = "⚠️ Uh-oh! Please enter valid numbers in all fields.";
+          return;
+        }
 
         const dailyLoss = missed * (rate / 100) * aov;
         const monthlyLoss = dailyLoss * 30;
 
-        output.innerHTML = `🧾 You’re losing approximately <br><strong>₹${dailyLoss.toFixed(0)}</strong> per day<br><strong>₹${monthlyLoss.toFixed(0)}</strong> per month`;
-      }, 1000);
+        output.style.display = "block";
+        output.innerHTML = `
+          🧾 You’re losing approximately:
+          <strong>₹${dailyLoss.toFixed(0)} / day</strong>
+          <strong>₹${monthlyLoss.toFixed(0)} / month</strong>
+        `;
+
+        followup.innerHTML = `
+          That’s how much you're losing every month. Deploying AI agents might be a smart fix - they’re your 24x7 brand companions who never miss a customer conversation.
+        `;
+      }, 800);
     }
   </script>
 
@@ -177,4 +200,7 @@ updated_html = """
 </html>
 """
 
-HTML(updated_html)
+with open("/mnt/data/index.html", "w") as file:
+    file.write(final_html)
+
+"/mnt/data/index.html"
